@@ -15,7 +15,6 @@ public class Perito {
         return nome;
     }
 
-    // TU01: Método para formatar a credencial (foco do Teste Unitário)
     public String formatarCredencial() {
         // Simplesmente retorna o formato para inserção no laudo
         return "Dr(a). " + nome + " - Matrícula: " + matricula + " (" + credencial + ")";
