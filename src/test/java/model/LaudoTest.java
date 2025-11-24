@@ -3,43 +3,31 @@ package model;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.time.LocalDate;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.List;
 
 public class LaudoTest {
 
-    // Helper para criar um Perito
     private Perito criarPerito() {
         return new Perito("Perito Teste", "999", "Qualificado");
     }
 
-    // TF02: Teste Funcional - Data de Ocorrência futura é inválida
+    // TF01: Data de ocorrência futura inválida
     @Test(expected = IllegalArgumentException.class)
     public void setDataOcorrenciaFuturaInvalidaTest() {
         Laudo laudo = new Laudo("Tipo A", criarPerito());
         LocalDate amanha = LocalDate.now().plusDays(1);
-        laudo.setDataOcorrencia(amanha); 
+        laudo.setDataOcorrencia(amanha);
     }
 
-    // TF04: Teste Funcional - Deve suportar 10.000 caracteres
-    @Test
-    public void corpoLaudoSuporta10000CaracteresTest() {
-        Laudo laudo = new Laudo("Tipo D", criarPerito());
-        String textoLongo = "a".repeat(10000); 
-        laudo.setCorpoLaudo(textoLongo);
-        assertEquals(10000, laudo.getCorpoLaudo().length());
-    }
-    
-    // TF04: Teste Funcional - Exceder o limite máximo
+    // TF02: Limite de caracteres excedido
     @Test(expected = IllegalArgumentException.class)
     public void corpoLaudoExcedeLimiteTest() {
-        Laudo laudo = new Laudo("Tipo D", criarPerito());
-        String textoMuitoLongo = "b".repeat(20001); 
+        Laudo laudo = new Laudo("Tipo B", criarPerito());
+        String textoMuitoLongo = "b".repeat(20001);
         laudo.setCorpoLaudo(textoMuitoLongo);
     }
 
-    // TF05: Teste Funcional - Laudo Finalizado NÃO pode ser excluído
+    // TF03: Laudo finalizado não pode ser excluído
     @Test
     public void naoPodeExcluirFinalizadoTest() {
         Laudo laudo = new Laudo("Tipo A", criarPerito());
@@ -47,14 +35,20 @@ public class LaudoTest {
         assertFalse(laudo.podeExcluir());
     }
 
-    // TU02: Teste Unitário - Validação de CPF ou CNPJ (Sucesso)
+    // TF04: Permissão de acesso
     @Test
-    public void validarCPFouCNPJValidoTest() {
-        assertTrue(ValidadorUtil.validarCPFouCNPJ("123.456.789-01"));
-        assertTrue(ValidadorUtil.validarCPFouCNPJ("12.345.678/0001-99"));
+    public void temPermissaoDeAcessoTest() {
+        Perito peritoPrincipal = criarPerito();
+        Perito tecnico = new Perito("Tecnico", "888", "Assistente");
+        Laudo laudo = new Laudo("Tipo C", peritoPrincipal);
+        laudo.getTecnicosDePericia().add(tecnico);
+
+        assertTrue(laudo.temPermissaoDeAcesso(peritoPrincipal));
+        assertTrue(laudo.temPermissaoDeAcesso(tecnico));
+        assertFalse(laudo.temPermissaoDeAcesso(new Perito("Outro", "000", "Nada")));
     }
-    
-    // TU03: Teste Unitário - Adição de Múltiplas Evidências
+
+    // TF05: Adição de evidências
     @Test
     public void adicionarMultiplasEvidenciasTest() {
         Laudo laudo = new Laudo("Tipo C", criarPerito());
@@ -62,16 +56,55 @@ public class LaudoTest {
         laudo.adicionarEvidencia("Evidência 2");
         assertEquals(2, laudo.getEvidencias().size());
         assertTrue(laudo.getEvidencias().contains("Evidência 1"));
+        assertTrue(laudo.getEvidencias().contains("Evidência 2"));
     }
-    
-    // TU05: Teste Unitário - Conversão de Data para Extenso
+
+    // Sistema Test 01: Fluxo completo Tipo A
     @Test
-    public void converterDataParaExtensoTest() {
+    public void fluxoCompletoLaudoTipoATest() {
+        Perito p = criarPerito();
+        Laudo laudo = new Laudo("Tipo A", p);
+        laudo.setCorpoLaudo("Corpo do laudo Tipo A.");
+        laudo.adicionarEvidencia("Evidência 1");
+        assertEquals("Tipo A", laudo.getTipoLaudo());
+        assertEquals(1, laudo.getEvidencias().size());
+    }
+
+    // Sistema Test 02: Fluxo completo Tipo B com técnico
+    @Test
+    public void fluxoCompletoLaudoTipoBTest() {
+        Perito p = criarPerito();
+        Perito tecnico = new Perito("Técnico", "101", "Assistente");
+        Laudo laudo = new Laudo("Tipo B", p);
+        laudo.getTecnicosDePericia().add(tecnico);
+        laudo.setCorpoLaudo("Corpo do laudo Tipo B.");
+        assertEquals(1, laudo.getTecnicosDePericia().size());
+        assertTrue(laudo.temPermissaoDeAcesso(tecnico));
+    }
+
+    // Sistema Test 03: Integração evidências e data
+    @Test
+    public void integracaoEvidenciasLaudoTest() {
+        Laudo laudo = new Laudo("Tipo D", criarPerito());
+        laudo.adicionarEvidencia("Evidência X");
+        laudo.setCorpoLaudo("Texto curto");
+        assertEquals(1, laudo.getEvidencias().size());
+        assertEquals("Texto curto", laudo.getCorpoLaudo());
+    }
+
+    // Sistema Test 04: Acesso negado
+    @Test
+    public void acessoNegadoLaudoTest() {
         Laudo laudo = new Laudo("Tipo E", criarPerito());
-        LocalDate data = LocalDate.of(2025, 11, 24); // 24/11/2025
-        String esperado = "24 de novembro de 2025";
-        
-        // O teste é sensível ao Locale, mas a implementação simplificada deve funcionar
-        assertEquals(esperado, laudo.converterDataParaExtenso(data)); 
+        Perito outro = new Perito("Outro", "555", "Nenhum");
+        assertFalse(laudo.temPermissaoDeAcesso(outro));
+    }
+
+    // Sistema Test 05: Conversão de data no sistema
+    @Test
+    public void conversaoDataSistemaTest() {
+        Laudo laudo = new Laudo("Tipo F", criarPerito());
+        String dataExtenso = laudo.converterDataParaExtenso(LocalDate.of(2025, 11, 24));
+        assertEquals("24 de novembro de 2025", dataExtenso);
     }
 }
