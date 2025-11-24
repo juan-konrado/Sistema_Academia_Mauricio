@@ -1,7 +1,8 @@
 package model;
 
 public class GeradorDocx {
-
+    
+    // TU04: Sanitarização de Entrada (Método para ser testado unitariamente)
     public String sanitizarTexto(String texto) {
         if (texto == null) return "";
         // Remove comandos perigosos, tags HTML e substitui quebras de linha
@@ -15,20 +16,10 @@ public class GeradorDocx {
         // 1. Processar dados (Ex: Sanitizar)
         String textoFormatado = sanitizarTexto(laudo.getCorpoLaudo());
         
-        // 2. Selecionar o template
+        // 2. Selecionar o template (TF01)
         if (laudo.getTipoLaudo().equals("Tipo A")) {
             // Lógica para usar Template A
             System.out.println("Usando Template A. Inserindo dados...");
-        }
-        
-        if (laudo.getTipoLaudo().equals("Tipo B")) {
-            // Lógica para usar Template A
-            System.out.println("Usando Template B. Inserindo dados...");
-        }
-        
-        if (laudo.getTipoLaudo().equals("Tipo C")) {
-            // Lógica para usar Template A
-            System.out.println("Usando Template C. Inserindo dados...");
         }
         
         // 3. Simula a escrita do arquivo DOCX
