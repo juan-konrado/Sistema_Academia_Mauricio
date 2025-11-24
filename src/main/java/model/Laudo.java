@@ -10,6 +10,7 @@ public class Laudo {
     private LocalDate dataOcorrencia;
     private Perito peritoResponsavel;
     private String status = "Rascunho"; // Ex: Rascunho, Finalizado
+    private List<String> evidencias = new ArrayList<>();
 
     public Laudo(String tipoLaudo, Perito peritoResponsavel) {
         this.tipoLaudo = tipoLaudo;
@@ -29,11 +30,36 @@ public class Laudo {
         }
         this.dataOcorrencia = dataOcorrencia;
     }
+
+    // TU03: Método para ser testado unitariamente
+    public void adicionarEvidencia(String evidencia) {
+        if (evidencia != null && !evidencia.trim().isEmpty()) {
+            this.evidencias.add(evidencia);
+        }
+    }
     
     // Métodos Getters e Setters
-    public String getTipoLaudo() { return tipoLaudo; }
-    public String getCorpoLaudo() { return corpoLaudo; }
-    public void setCorpoLaudo(String corpoLaudo) { this.corpoLaudo = corpoLaudo; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getTipoLaudo() { 
+        return tipoLaudo;
+    }
+    
+    public String getCorpoLaudo() { 
+        return corpoLaudo; 
+    }
+    
+    public void setCorpoLaudo(String corpoLaudo) { 
+        this.corpoLaudo = corpoLaudo; 
+    }
+    
+    public String getStatus() { 
+        return status; 
+    }
+    
+    public void setStatus(String status) { 
+        this.status = status; 
+    }
+    
+    public List<String> getEvidencias() {
+        return evidencias;
+    }
 }
