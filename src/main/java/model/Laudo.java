@@ -11,6 +11,7 @@ public class Laudo {
     private Perito peritoResponsavel;
     private String status = "Rascunho"; // Ex: Rascunho, Finalizado
     private List<String> evidencias = new ArrayList<>();
+    private final int LIMITE_MAXIMO_CORPO = 20000; // Constante para o limite
 
     public Laudo(String tipoLaudo, Perito peritoResponsavel) {
         this.tipoLaudo = tipoLaudo;
@@ -38,6 +39,13 @@ public class Laudo {
         }
     }
     
+    public void setCorpoLaudo(String corpoLaudo) {
+        if (corpoLaudo != null && corpoLaudo.length() > LIMITE_MAXIMO_CORPO) {
+            throw new IllegalArgumentException("O corpo do laudo excede o limite máximo de " + LIMITE_MAXIMO_CORPO + " caracteres.");
+        }
+        this.corpoLaudo = corpoLaudo;
+    }
+    
     // Métodos Getters e Setters
     public String getTipoLaudo() { 
         return tipoLaudo;
@@ -62,4 +70,5 @@ public class Laudo {
     public List<String> getEvidencias() {
         return evidencias;
     }
+
 }
