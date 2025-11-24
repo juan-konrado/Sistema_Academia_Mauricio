@@ -62,6 +62,31 @@ public class LaudoTest {
         assertEquals(0, laudo.getEvidencias().size());
     }
 
+    // TF04: Teste Funcional - Deve suportar 10.000 caracteres (Cenário de Sucesso)
+    @Test
+    public void corpoLaudoSuporta10000CaracteresTest() {
+        Laudo laudo = new Laudo("Tipo D", criarPerito());
+    
+        // Cria uma string com exatamente 10.000 caracteres
+        String textoLongo = "a".repeat(10000); 
+    
+        laudo.setCorpoLaudo(textoLongo);
+    
+        // Verifica se o texto foi definido corretamente e não lançou exceção
+        assertEquals(10000, laudo.getCorpoLaudo().length());
+    }
+
+    // TF04: Teste Funcional - Exceder o limite máximo (Cenário de Falha)
+    @Test(expected = IllegalArgumentException.class)
+    public void corpoLaudoExcedeLimiteTest() {
+        Laudo laudo = new Laudo("Tipo D", criarPerito());
+    
+        // Cria uma string que excede o limite máximo de 20.000 + 1
+        String textoMuitoLongo = "b".repeat(20001); 
+    
+        laudo.setCorpoLaudo(textoMuitoLongo);
+    }
+
     // TF05: Teste Funcional - Laudo em Rascunho pode ser excluído
     @Test
     public void podeExcluirRascunhoTest() {
