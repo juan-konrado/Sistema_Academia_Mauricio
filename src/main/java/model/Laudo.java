@@ -5,7 +5,7 @@ import java.util.List;
 import java.time.LocalDate;
 
 public class Laudo {
-    private String tipoLaudo;
+    private String tipoLaudo; // Ex: Tipo A, Tipo B, etc.
     private String corpoLaudo;
     private LocalDate dataOcorrencia;
     private Perito peritoResponsavel;
@@ -14,12 +14,15 @@ public class Laudo {
     public Laudo(String tipoLaudo, Perito peritoResponsavel) {
         this.tipoLaudo = tipoLaudo;
         this.peritoResponsavel = peritoResponsavel;
+        // TF01: A lógica de validação de tipo de laudo ocorreria aqui ou na camada de serviço
     }
 
+    // TF05: Validação de Status (Exclusão)
     public boolean podeExcluir() {
         return status.equals("Rascunho");
     }
 
+    // TF02: Validação de Data (Exemplo de regra de negócio)
     public void setDataOcorrencia(LocalDate dataOcorrencia) {
         if (dataOcorrencia.isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("A data da ocorrência não pode ser futura.");
@@ -27,6 +30,7 @@ public class Laudo {
         this.dataOcorrencia = dataOcorrencia;
     }
     
+    // Métodos Getters e Setters
     public String getTipoLaudo() { return tipoLaudo; }
     public String getCorpoLaudo() { return corpoLaudo; }
     public void setCorpoLaudo(String corpoLaudo) { this.corpoLaudo = corpoLaudo; }
