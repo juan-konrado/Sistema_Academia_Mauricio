@@ -34,6 +34,34 @@ public class LaudoTest {
         // Não deve lançar exceção
     }
 
+    // TU03: Teste Unitário - Adição de Múltiplas Evidências
+    @Test
+    public void adicionarMultiplasEvidenciasTest() {
+        Laudo laudo = new Laudo("Tipo C", criarPerito());
+    
+        laudo.adicionarEvidencia("Câmera de Segurança 01");
+        laudo.adicionarEvidencia("Depoimento da Testemunha X");
+    
+        // Verifica se o tamanho da lista é o esperado
+        assertEquals(2, laudo.getEvidencias().size());
+    
+        // Verifica se um item específico foi adicionado corretamente
+        assertTrue(laudo.getEvidencias().contains("Câmera de Segurança 01"));
+    }
+
+    // TU03: Teste Unitário - Não deve adicionar evidências nulas ou vazias
+    @Test
+    public void naoAdicionarEvidenciaNulaOuVaziaTest() {
+        Laudo laudo = new Laudo("Tipo C", criarPerito());
+    
+        laudo.adicionarEvidencia(null);
+        laudo.adicionarEvidencia("");
+        laudo.adicionarEvidencia("  "); // Espaços em branco
+    
+        // Verifica se o tamanho da lista permanece zero
+        assertEquals(0, laudo.getEvidencias().size());
+    }
+
     // TF05: Teste Funcional - Laudo em Rascunho pode ser excluído
     @Test
     public void podeExcluirRascunhoTest() {
